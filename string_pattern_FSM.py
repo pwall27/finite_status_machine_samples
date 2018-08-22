@@ -1,47 +1,64 @@
 # Pattern @345#
+from state_machine import StateMachine
 
 
-def state_zero(char: str):
+def state_zero(text: str):
+    try:
+        char, text = text[0], text[1:]
+    except IndexError:
+        return "error_state", text
     if char == "@":
-        return 1
-    return 0
+        return "first_state", text
+    return "start_state", text
 
 
-def state_one(char: str):
+def state_one(text: str):
+    try:
+        char, text = text[0], text[1:]
+    except IndexError:
+        return "error_state", text
     if char in [str(x) for x in range(10)]:
-        return 2
-    return 1
-
-
-def state_two(char: str):
-    if char in [str(x) for x in range(10)]:
-        return 2
-
+        return "second_state", text
     if char == "@":
-        return 1
+        return "first_state", text
+    return "start_state", text
 
+
+def state_two(text: str):
+    try:
+        char, text = text[0], text[1:]
+    except IndexError:
+        return "error_state", text
+    if char in [str(x) for x in range(10)]:
+        return "second_state", text
+    if char == "@":
+        return "first_state", text
     if char == "#":
-        return 3
+        return "third_state", text
+    return "start_state", text
 
-    return 0
 
+def state_three(text: str):
+    try:
+        char, text = text[0], text[1:]
+    except IndexError:
+        return "last_state", text
 
-def state_three(char: str):
     if char == "@":
-        return 1
-    return 0
+        return "first_state", text
+    return "start_state", text
 
 
-def match(string: str):
-    state = 0
-    states = {
-        0: state_zero,
-        1: state_one,
-        2: state_two,
-        3: state_three
-    }
-    for char in string:
-        state = states[state](char)
-
-    return state == 3
+if __name__ == "__main__":
+    m = StateMachine()
+    m.add_state("start_state", state_zero)
+    m.add_state("first_state", state_one)
+    m.add_state("second_state", state_two)
+    m.add_state("third_state", state_three)
+    m.add_state("last_state", None, end_state=1)
+    m.add_state("error_state", None, end_state=1)
+    m.set_start("start_state")
+    m.run("@234#")
+    m.run("1@638#")
+    m.run("@139#1")
 

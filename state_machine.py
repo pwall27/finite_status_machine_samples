@@ -26,7 +26,6 @@ class StateMachine:
         while True:
             (new_state, cargo) = handler(cargo)
             if new_state.upper() in self.end_states:
-                print("reached ", new_state)
-                break
+                return f"reached {new_state} which is an end state"
             else:
                 handler = self.handlers[new_state.upper()]

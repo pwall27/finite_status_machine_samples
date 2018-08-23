@@ -1,39 +1,37 @@
 from random import randint
 
+from state_machine import StateMachine
 
-def state_red(timer_input):
+
+def state_red(timer_input, next_input=randint(0, 1)):
     if timer_input == 1:
-        return "green"
+        return "green", next_input
     if timer_input == 0:
-        return "red"
+        return "red", next_input
 
 
-def state_green(timer_input):
+def state_green(timer_input, next_input=randint(0, 1)):
     if timer_input == 1:
-        return "yellow"
+        return "yellow", next_input
     if timer_input == 0:
-        return "green"
+        return "green", next_input
 
 
-def state_yellow(timer_input):
+def state_yellow(timer_input, next_input=randint(0, 1)):
     if timer_input == 1:
-        return "red"
+        return "red", next_input
     if timer_input == 0:
-        return "yellow"
+        return "yellow", next_input
 
 
-def run_fsm(state: str, transaction: int):
-    switch = {
-        "red": state_red,
-        "green": state_green,
-        "yellow": state_yellow
-    }
-    func = switch.get(state, lambda: None)
-    return func(transaction)
+if __name__ == "__main__":
+    m = StateMachine()
+    m.add_state("red", state_red)
+    m.add_state("green", state_green)
+    m.add_state("yellow", state_yellow)
+    m.add_state("last_state", None, end_state=1)
+    m.add_state("error_state", None, end_state=1)
+    m.set_start("red")
 
-
-# if __name__ == "__main__":
-#     st = "red"
-#     while True:
-#         st = run_fsm(st, randint(0, 1))
-#         print(f"Transaction at: {st}")
+    while True:
+        m.run(randint(0, 1))
